@@ -35,8 +35,6 @@ class Receiver:
                 print(f"Received data from {sender_ip}: {data.decode()}")
 
                 # Forward message on (probably via Queue on main)
-                    
-
 
     def listen(self):
         while True:
