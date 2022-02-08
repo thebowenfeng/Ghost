@@ -32,7 +32,7 @@ class Sender:
                 self.answer_flag.set()
 
     def send(self, ip: str, message: str):
-        if self.sender_init.is_set() and self.sender_finish.is_set():
+        if not self.sender_init.is_set() and not self.sender_finish.is_set():
             self.ip = ip
             self.message = message
             

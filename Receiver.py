@@ -18,28 +18,36 @@ class Receiver:
                 if data['receiver_ip'] == self.host_ip:
                     print(f"Connection received from {data['sender_ip']}. Remote outbound port: {data['out_port']}")
 
-                sender_ip = data['sender_ip']
+                    sender_ip = data['sender_ip']
 
-                print("Initiating punch...")
+                    print("Initiating punch...")
 
-                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                sock.bind(('0.0.0.0', config.INBOUND_PORT))
-                sock.sendto(b'punch', (data['sender_ip'], data['out_port']))
-                sock.close()
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    sock.bind(('0.0.0.0', config.INBOUND_PORT))
+                    sock.sendto(b'punch', (data['sender_ip'], data['out_port']))
+                    sock.close()
 
-                print("Punching complete. Initiating listener...")
-                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                sock.bind(('0.0.0.0', config.INBOUND_PORT))
+                    print("Punching complete")
 
-                data = sock.recv(1024)
-                print(f"Received data from {sender_ip}: {data.decode()}")
+                    print("Sending answer...")
+                    answer = {
+                        'listening_port': config.INBOUND_PORT
+                    }
+                    self.db.collection(u'offers').document(change.document.id).update({"answer": answer})
+                    print("Answer sent, initiating listening process")
 
-                # Forward message on (probably via Queue on main)
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    sock.bind(('0.0.0.0', config.INBOUND_PORT))
+
+                    data = sock.recv(1024)
+                    print(f"Received data from {sender_ip}: {data.decode()}")
+
+                    # Forward message on (probably via Queue on main)
 
     def listen(self):
         while True:
             self.sender_finish.clear()
-            unsub = self.db.collection(u'offer').on_snapshot(self.offer_listener)
+            unsub = self.db.collection(u'offers').on_snapshot(self.offer_listener)
             self.sender_init.wait()
             print("Initialzed remote communication process. Temporarily stop offer listening")
             unsub.unsubscribe()

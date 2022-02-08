@@ -14,8 +14,8 @@ db = firestore.client()
 sender_init = Event()
 sender_finish = Event()
 
-receiver = Receiver(db, sender_init, sender_finish)
-receiver.listen()
+#receiver = Receiver(db, sender_init, sender_finish)
+#receiver.listen()
 
-#sender = Sender(db=db, sender_init=sender_init, sender_finish=sender_finish)
-#sender.send(ip="35.224.50.44", message="Hello World")
+sender = Sender(db=db, sender_init=sender_init, sender_finish=sender_finish)
+sender.send(ip="35.224.50.44", message="Hello World")
