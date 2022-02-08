@@ -3,6 +3,8 @@ from threading import Event
 import socket
 import time
 
+from Sender import Sender
+
 
 class Receiver:
     def __init__(self, db, sender_init: Event, sender_finish: Event):
@@ -45,7 +47,9 @@ class Receiver:
                     data = sock.recv(1024)
                     print(f"Received data from {sender_ip}: {data.decode()}")
 
-                    # Forward message on (probably via Queue on main)
+                    sender = Sender(db=self.db, sender_init=self.sender_init, sender_finish=self.sender_finish)
+                    sender.send(sender_ip, data.decode() + " reply")
+                    del sender
 
     def listen(self):
         while True:
