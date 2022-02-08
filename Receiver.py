@@ -1,6 +1,7 @@
 import config
 from threading import Event
 import socket
+import time
 
 
 class Receiver:
@@ -28,6 +29,8 @@ class Receiver:
                     sock.close()
 
                     print("Punching complete")
+
+                    time.sleep(0.5)
 
                     print("Sending answer...")
                     answer = {
