@@ -1,5 +1,6 @@
 import config
 from threading import Event
+import socket
 
 
 class Receiver:
@@ -16,6 +17,8 @@ class Receiver:
                 data = change.document.to_dict()['offer']
                 if data['receiver_ip'] == self.host_ip:
                     print(f"Connection received from {data['sender_ip']}. Remote outbound port: {data['out_port']}")
+
+                sender_ip = data['sender_ip']
 
                 print("Initiating punch...")
 

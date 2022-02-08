@@ -1,5 +1,6 @@
 import config
 from threading import Event
+import socket
 
 
 class Sender:
@@ -47,7 +48,7 @@ class Sender:
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.bind(('0.0.0.0', config.OUTBOUND_PORT))
-            sock.sendto(msg.encode(), (self.ip, self.remote_port))
+            sock.sendto(self.message.encode(), (self.ip, self.remote_port))
 
             print(f"Sent message to {self.ip}")
 

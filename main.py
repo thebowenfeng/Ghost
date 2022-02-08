@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from threading import Event
 
 from Sender import Sender
 
@@ -9,5 +10,8 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-sender = Sender(ip='testip1', message='bruh', db=db)
-sender.send()
+sender_init = Event()
+sender_finish = Event()
+
+sender = Sender(db=db, sender_init=sender_init, sender_finish=sender_finish)
+sender.send(ip="35.224.50.44", message="Hello World")
