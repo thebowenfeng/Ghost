@@ -38,9 +38,7 @@ class Receiver:
 
     def listen(self):
         while True:
-            self.sender_init.set()
-            self.sender_finish.set()
-            
+            self.sender_finish.clear()
             unsub = self.db.collection(u'offer').on_snapshot(self.offer_listener)
             self.sender_init.wait()
             print("Initialzed remote communication process. Temporarily stop offer listening")

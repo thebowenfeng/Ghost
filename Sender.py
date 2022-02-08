@@ -36,7 +36,7 @@ class Sender:
             self.ip = ip
             self.message = message
             
-            self.sender_init.clear()
+            self.sender_init.set()
             self.send_offer()
             self.db.collection(u'offers').document(self.doc_ref[1].id).on_snapshot(self.answer_listener)
             print(f"Offer sent to {self.ip}")
@@ -52,6 +52,7 @@ class Sender:
 
             print(f"Sent message to {self.ip}")
 
-            self.sender_finish.clear()
+            self.sender_init.clear()
+            self.sender_finish.set()
         else:
             print("A separate remote communication is in progress, please wait")
