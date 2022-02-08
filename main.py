@@ -29,4 +29,4 @@ sender = Sender(db=db, sender_init=sender_init, sender_finish=sender_finish)
 
 while True:
     inp = input("Enter message: ")
-    sender.send(ip="35.224.50.44", message="Bruhhhhhh")
+    sender.send(ip="35.224.50.44", message=inp)
