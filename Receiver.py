@@ -6,10 +6,11 @@ from utils import reserve_port, Colors, free_port
 
 
 class Receiver:
-    def __init__(self, db):
+    def __init__(self, db, on_receive: callable):
         self.host_ip = config.HOST_IP
         self.inbound_port = None
         self.db = db
+        self.receive_callback = on_receive
 
     def offer_listener(self, snapshot, changes, read_time):
         for change in changes:
@@ -50,6 +51,8 @@ class Receiver:
                         sock.close()
 
                         free_port(self.inbound_port)
+
+                        self.receive_callback(sender_ip, data.decode())
 
     def listen(self):
         unsub = self.db.collection(u'offers').on_snapshot(self.offer_listener)

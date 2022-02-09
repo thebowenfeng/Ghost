@@ -10,12 +10,13 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-receiver = Receiver(db=db, on_receive=lambda x, y: print(y))
-receiver.listen()
 sender = Sender(db=db)
 
-sender.send("34.82.21.166", "Hello bootstrapnode")
 
-while True:
-    inp = input("Enter message: ")
-    sender.send(ip="35.224.50.44", message=inp)
+def reply(sender_ip, data):
+    sender.send(sender_ip, "bruh")
+
+
+receiver = Receiver(db=db, on_receive=reply)
+receiver.listen()
+
