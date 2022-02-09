@@ -35,6 +35,7 @@ class Sender:
     def answer_listener(self, snapshot, changes, read_time):
         for change in changes:
             if change.type.name == "MODIFIED" and 'answer' in change.document.to_dict() and change.document.to_dict()["offer"]["out_port"] == self.outbound_port:
+                print(change.document.to_dict())
                 data = change.document.to_dict()["answer"]
                 self.remote_port = data['listening_port']
                 self.answer_flag.set()
@@ -45,7 +46,6 @@ class Sender:
 
         if self.send_offer():
             self.db.collection(u'offers').document(self.doc_ref[1].id).on_snapshot(self.answer_listener)
-            #print(self.db.collection(u'offers').document(self.doc_ref[1].id).get().to_dict())
             print(Colors.OKCYAN + f"LOG: Offer sent to {self.ip}" + Colors.ENDC)
 
             self.answer_flag.wait()
