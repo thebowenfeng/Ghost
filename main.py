@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+import json
 
 from Sender import Sender
 from Receiver import Receiver
@@ -10,7 +11,14 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-receiver = Receiver(db=db, on_receive=lambda x, y: print(y))
+
+def on_receive(sender_ip, data):
+    json_data = json.loads(data)
+    if json_data["type"] == "get_nodes":
+        print(json_data["nodes"])
+
+
+receiver = Receiver(db=db, on_receive=on_receive)
 receiver.listen()
 sender = Sender(db=db)
 

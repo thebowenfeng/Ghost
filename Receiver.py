@@ -47,7 +47,7 @@ class Receiver:
                         sock.bind(('0.0.0.0', self.inbound_port))
 
                         data = sock.recv(1024)
-                        print(f"Received data from {sender_ip}: {data.decode()}")
+                        print(Colors.OKCYAN + f"LOG: Received data from {sender_ip}" + Colors.ENDC)
                         sock.close()
 
                         free_port(self.inbound_port)
