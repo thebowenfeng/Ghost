@@ -42,13 +42,14 @@ class Receiver:
                             'listening_port': self.inbound_port
                         }
                         self.db.collection(u'offers').document(change.document.id).update({"answer": answer})
-                        print(Colors.OKCYAN + "LOG: Answer sent, initiating listening process" + Colors.ENDC)
+                        print(Colors.OKCYAN + f"LOG: Answer sent, listening on {self.inbound_port}" + Colors.ENDC)
 
                         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                         sock.bind(('0.0.0.0', self.inbound_port))
 
                         data = sock.recv(1024)
                         print(f"Received data from {sender_ip}: {data.decode()}")
+                        sock.close()
 
                         free_port(self.inbound_port)
 
