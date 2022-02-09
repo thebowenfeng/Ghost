@@ -34,7 +34,7 @@ class Sender:
 
     def answer_listener(self, snapshot, changes, read_time):
         for change in changes:
-            if change.type.name == "MODIFIED" and 'answer' in change.document.to_dict() and change.document.to_dict()["offer"]["out_port"] == self.outbound_port:
+            if change.type.name == "MODIFIED" and 'answer' in change.document.to_dict() and int(change.document.to_dict()["offer"]["out_port"]) == self.outbound_port:
                 print(change.document.to_dict())
                 data = change.document.to_dict()["answer"]
                 self.remote_port = data['listening_port']
@@ -51,6 +51,7 @@ class Sender:
             self.answer_flag.wait()
             print(Colors.OKCYAN + f"LOG: Answer received from {self.ip}. Attempting communication on remote port {self.remote_port}" + Colors.ENDC)
             unsub.unsubscribe()
+            self.answer_flag.clear()
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.bind(('0.0.0.0', self.outbound_port))
