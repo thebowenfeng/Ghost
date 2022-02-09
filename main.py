@@ -22,7 +22,7 @@ receiver = Receiver(db=db, on_receive=on_receive)
 receiver.listen()
 sender = Sender(db=db)
 
-sender.send("34.82.21.166", "Hello bootstrapnode")
+sender.send("34.82.21.166", "MyUsername")
 
 while True:
     inp = input("Enter message: ")
