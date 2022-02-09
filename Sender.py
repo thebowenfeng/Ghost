@@ -45,11 +45,12 @@ class Sender:
         self.message = message
 
         if self.send_offer():
-            self.db.collection(u'offers').document(self.doc_ref[1].id).on_snapshot(self.answer_listener)
+            unsub = self.db.collection(u'offers').document(self.doc_ref[1].id).on_snapshot(self.answer_listener)
             print(Colors.OKCYAN + f"LOG: Offer sent to {self.ip}" + Colors.ENDC)
 
             self.answer_flag.wait()
             print(Colors.OKCYAN + f"LOG: Answer received from {self.ip}. Attempting communication on remote port {self.remote_port}" + Colors.ENDC)
+            unsub.unsubscribe()
 
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.bind(('0.0.0.0', self.outbound_port))
