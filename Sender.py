@@ -2,7 +2,6 @@ import config
 from threading import Event
 import socket
 
-from main import port_reserve_pool
 from utils import reserve_port, Colors, free_port
 
 
@@ -18,7 +17,7 @@ class Sender:
         self.outbound_port = None
 
     def send_offer(self):
-        self.outbound_port = reserve_port(port_reserve_pool)
+        self.outbound_port = reserve_port()
 
         if not self.outbound_port:
             print(Colors.FAIL + "ERROR: No available ports at the moment" + Colors.ENDC)

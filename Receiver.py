@@ -5,7 +5,6 @@ import time
 
 from Sender import Sender
 from utils import reserve_port, Colors, free_port
-from main import port_reserve_pool
 
 
 class Receiver:
@@ -22,7 +21,7 @@ class Receiver:
                     print(f"Connection received from {data['sender_ip']}. Remote outbound port: {data['out_port']}")
 
                     sender_ip = data['sender_ip']
-                    self.inbound_port = reserve_port(port_reserve_pool)
+                    self.inbound_port = reserve_port()
 
                     if not self.inbound_port:
                         print(Colors.FAIL + "ERROR: No port available at the moment" + Colors.ENDC)
@@ -51,8 +50,7 @@ class Receiver:
                         data = sock.recv(1024)
                         print(f"Received data from {sender_ip}: {data.decode()}")
 
-                        free_port(self.inbound_port, port_reserve_pool)
+                        free_port(self.inbound_port)
 
     def listen(self):
-        while True:
-            unsub = self.db.collection(u'offers').on_snapshot(self.offer_listener)
+        unsub = self.db.collection(u'offers').on_snapshot(self.offer_listener)

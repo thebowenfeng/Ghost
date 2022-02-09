@@ -1,6 +1,9 @@
 import config
 
 
+port_reserve_pool = []
+
+
 class Colors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -13,7 +16,7 @@ class Colors:
     UNDERLINE = '\033[4m'
 
 
-def reserve_port(port_reserve_pool: list):
+def reserve_port():
     if len(port_reserve_pool) == 0:
         port_reserve_pool.append(config.PORT_START)
         return config.PORT_START
@@ -36,5 +39,5 @@ def reserve_port(port_reserve_pool: list):
         return False
 
 
-def free_port(port: int, port_reserve_pool: list):
+def free_port(port: int):
     port_reserve_pool.remove(port)
