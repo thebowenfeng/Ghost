@@ -12,20 +12,18 @@ cred = credentials.Certificate('silence-79c33-firebase-adminsdk-dljcm-533b274b1c
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
-
-sender_init = Event()
-sender_finish = Event()
+port_reserve_pool = []
 
 
 def listen_thread():
-    receiver = Receiver(db, sender_init, sender_finish)
+    receiver = Receiver(db)
     receiver.listen()
 
 
 child_thread = threading.Thread(target=listen_thread)
 child_thread.start()
 
-sender = Sender(db=db, sender_init=sender_init, sender_finish=sender_finish)
+sender = Sender(db=db)
 
 while True:
     inp = input("Enter message: ")

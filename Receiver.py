@@ -4,15 +4,15 @@ import socket
 import time
 
 from Sender import Sender
+from utils import reserve_port, Colors, free_port
+from main import port_reserve_pool
 
 
 class Receiver:
-    def __init__(self, db, sender_init: Event, sender_finish: Event):
+    def __init__(self, db):
         self.host_ip = config.HOST_IP
-        self.in_port = config.INBOUND_PORT
+        self.inbound_port = None
         self.db = db
-        self.sender_init = sender_init
-        self.sender_finish = sender_finish
 
     def offer_listener(self, snapshot, changes, read_time):
         for change in changes:
@@ -22,41 +22,37 @@ class Receiver:
                     print(f"Connection received from {data['sender_ip']}. Remote outbound port: {data['out_port']}")
 
                     sender_ip = data['sender_ip']
+                    self.inbound_port = reserve_port(port_reserve_pool)
 
-                    print("Initiating punch...")
+                    if not self.inbound_port:
+                        print(Colors.FAIL + "ERROR: No port available at the moment" + Colors.ENDC)
+                    else:
+                        print(Colors.OKCYAN + "LOG: Initiating punch..." + Colors.ENDC)
 
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                    sock.bind(('0.0.0.0', config.INBOUND_PORT))
-                    sock.sendto(b'punch', (data['sender_ip'], data['out_port']))
-                    sock.close()
+                        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                        sock.bind(('0.0.0.0', self.inbound_port))
+                        sock.sendto(b'punch', (data['sender_ip'], data['out_port']))
+                        sock.close()
 
-                    print("Punching complete")
+                        print(Colors.OKCYAN + "LOG: Punching complete" + Colors.ENDC)
 
-                    time.sleep(0.5)
+                        time.sleep(0.5)
 
-                    print("Sending answer...")
-                    answer = {
-                        'listening_port': config.INBOUND_PORT
-                    }
-                    self.db.collection(u'offers').document(change.document.id).update({"answer": answer})
-                    print("Answer sent, initiating listening process")
+                        print(Colors.OKCYAN + "LOG: Sending answer..." + Colors.ENDC)
+                        answer = {
+                            'listening_port': self.inbound_port
+                        }
+                        self.db.collection(u'offers').document(change.document.id).update({"answer": answer})
+                        print(Colors.OKCYAN + "LOG: Answer sent, initiating listening process" + Colors.ENDC)
 
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                    sock.bind(('0.0.0.0', config.INBOUND_PORT))
+                        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                        sock.bind(('0.0.0.0', self.inbound_port))
 
-                    data = sock.recv(1024)
-                    print(f"Received data from {sender_ip}: {data.decode()}")
+                        data = sock.recv(1024)
+                        print(f"Received data from {sender_ip}: {data.decode()}")
 
-                    sender = Sender(db=self.db, sender_init=self.sender_init, sender_finish=self.sender_finish)
-                    sender.send(sender_ip, data.decode() + " reply")
-                    del sender
+                        free_port(self.inbound_port, port_reserve_pool)
 
     def listen(self):
         while True:
-            self.sender_finish.clear()
             unsub = self.db.collection(u'offers').on_snapshot(self.offer_listener)
-            self.sender_init.wait()
-            print("Initialzed remote communication process. Temporarily stop offer listening")
-            unsub.unsubscribe()
-            self.sender_finish.wait()
-            print("Reinstated offer listening")
