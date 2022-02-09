@@ -45,6 +45,7 @@ class Sender:
 
         if self.send_offer():
             self.db.collection(u'offers').document(self.doc_ref[1].id).on_snapshot(self.answer_listener)
+            print(self.db.collection(u'offers').document(self.doc_ref[1].id).to_dict())
             print(Colors.OKCYAN + f"LOG: Offer sent to {self.ip}" + Colors.ENDC)
 
             self.answer_flag.wait()
