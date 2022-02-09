@@ -31,7 +31,6 @@ class Receiver:
                         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                         sock.bind(('0.0.0.0', self.inbound_port))
                         sock.sendto(b'punch', (data['sender_ip'], data['out_port']))
-                        sock.shutdown(socket.SHUT_RDWR)
                         sock.close()
 
                         print(Colors.OKCYAN + "LOG: Punching complete" + Colors.ENDC)
@@ -50,7 +49,6 @@ class Receiver:
 
                         data = sock.recv(1024)
                         print(f"Received data from {sender_ip}: {data.decode()}")
-                        sock.shutdown(socket.SHUT_RDWR)
                         sock.close()
 
                         free_port(self.inbound_port)

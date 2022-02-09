@@ -53,7 +53,6 @@ class Sender:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.bind(('0.0.0.0', self.outbound_port))
             sock.sendto(self.message.encode(), (self.ip, self.remote_port))
-            sock.shutdown(socket.SHUT_RDWR)
             sock.close()
 
             print(Colors.OKCYAN + f"LOG: Sent message to {self.ip}" + Colors.ENDC)
