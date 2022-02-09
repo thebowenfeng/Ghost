@@ -1,9 +1,7 @@
 import config
-from threading import Event
 import socket
 import time
 
-from Sender import Sender
 from utils import reserve_port, Colors, free_port
 
 
@@ -18,7 +16,7 @@ class Receiver:
             if change.type.name == "ADDED" and 'offer' in change.document.to_dict() and 'answer' not in change.document.to_dict():
                 data = change.document.to_dict()['offer']
                 if data['receiver_ip'] == self.host_ip:
-                    print(f"Connection received from {data['sender_ip']}. Remote outbound port: {data['out_port']}")
+                    print(Colors.OKCYAN + f"Connection received from {data['sender_ip']}. Remote outbound port: {data['out_port']}" + Colors.ENDC)
 
                     sender_ip = data['sender_ip']
                     self.inbound_port = reserve_port()
