@@ -20,3 +20,6 @@ def reply(sender_ip, data):
 receiver = Receiver(db=db, on_receive=reply)
 receiver.listen()
 
+while True:
+    pass
+
