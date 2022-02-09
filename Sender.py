@@ -34,7 +34,7 @@ class Sender:
 
     def answer_listener(self, snapshot, changes, read_time):
         for change in changes:
-            if change.type.name == "MODIFIED" and 'answer' in change.document.to_dict() and change.document.to_dict()["out_port"] == self.outbound_port:
+            if change.type.name == "MODIFIED" and 'answer' in change.document.to_dict() and change.document.to_dict()["offer"]["out_port"] == self.outbound_port:
                 data = change.document.to_dict()["answer"]
                 self.remote_port = data['listening_port']
                 self.answer_flag.set()
