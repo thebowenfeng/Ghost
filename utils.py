@@ -1,4 +1,5 @@
 import config
+import random
 
 
 port_reserve_pool = []
@@ -17,26 +18,11 @@ class Colors:
 
 
 def reserve_port():
-    if len(port_reserve_pool) == 0:
-        port_reserve_pool.append(config.PORT_START)
-        return config.PORT_START
-
-    # Check for gaps in reserved ports
-    prev = config.PORT_START
-    for index in range(0, len(port_reserve_pool)):
-        curr = port_reserve_pool[index]
-        if curr - prev > 1:
-            port_reserve_pool.insert(index, prev + 1)
-            return prev + 1
-        else:
-            prev = curr
-
-    # Case when all ports are consecutive, need to append
-    if port_reserve_pool[-1] < config.PORT_END:
-        port_reserve_pool.append(port_reserve_pool[-1] + 1)
-        return port_reserve_pool[-1] + 1
-    else:
-        return False
+    while True:
+        rand_port = random.randint(config.PORT_START, config.PORT_END)
+        if rand_port not in port_reserve_pool:
+            port_reserve_pool.append(rand_port)
+            return rand_port
 
 
 def free_port(port: int):
