@@ -12,15 +12,8 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-
-def listen_thread():
-    receiver = Receiver(db)
-    receiver.listen()
-
-
-child_thread = threading.Thread(target=listen_thread)
-child_thread.start()
-
+receiver = Receiver(db=db)
+receiver.listen()
 sender = Sender(db=db)
 
 while True:
