@@ -32,7 +32,7 @@ def node_lookup(target_id: str):
     while kademlia_table == [[] for i in range(255)]:
         # Wait for nodes to be inserted
         pass
-    
+
     lookup = kademlia_lookup(kademlia_table, node_id, target_id)
     if len(lookup) == 0:
         # Case empty row, send lookup req to nodes in closest rows
@@ -130,7 +130,7 @@ receiver = Receiver(db=db, on_receive=on_receive)
 receiver.listen()
 sender = Sender(db=db)
 
-sender.send(BOOTSTRAP_NODE, json.dumps({"type": "connect", "node_id": node_id, "public_key": public_key.exportKey(format='PEM')}))
+sender.send(BOOTSTRAP_NODE, json.dumps({"type": "connect", "node_id": node_id, "public_key": public_key.exportKey(format='PEM').decode('utf-8')}))
 
 print(f"Node address: {node_id}")
 
@@ -143,7 +143,6 @@ while True:
     while node is False:
         curr = time.time()
         if curr - start > config.LOOKUP_TIMEOUT:
-
             break
         node = node_lookup(recv_id)
 
