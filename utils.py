@@ -1,5 +1,6 @@
 import config
 import random
+import bitarray
 
 
 port_reserve_pool = []
@@ -27,3 +28,42 @@ def reserve_port():
 
 def free_port(port: int):
     port_reserve_pool.remove(port)
+
+
+def compare_bits(a: str, b: str):
+    a_bits = bitarray.bitarray()
+    b_bits = bitarray.bitarray()
+
+    a_bits.frombytes(a.encode('utf-8'))
+    b_bits.frombytes(b.encode('utf-8'))
+
+    n_bits = 0
+
+    for i in range(len(a_bits)):
+        if i >= len(b_bits):
+            break
+
+        if a_bits[i] != b_bits[i]:
+            return n_bits
+        else:
+            n_bits += 1
+
+    return n_bits
+
+
+def kademlia_insert(table: list, node_id: str, target_info: dict):
+    similarity = compare_bits(node_id, target_info['node_id'])
+
+    if similarity >= 254:
+        table[254].append(target_info)
+    else:
+        table[similarity].append(target_info)
+
+
+def kademlia_lookup(table: list, node_id: str, target_id: str):
+    similarity = compare_bits(node_id, target_id)
+
+    if similarity >= 254:
+        return table[254]
+    else:
+        return table[similarity]

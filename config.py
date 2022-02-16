@@ -1,5 +1,7 @@
 import requests
 
 HOST_IP = requests.get('https://api.ipify.org').text
-PORT_START = 55234
-PORT_END = 62432
+PORT_START = 50000
+PORT_END = 60000
+
+LOOKUP_TIMEOUT = 10

@@ -16,8 +16,9 @@ sender = Sender(db=db)
 
 
 def reply(sender_ip, data):
+    print(f"{sender_ip} connected")
     sender.send(sender_ip, json.dumps({"type": "get_nodes", "nodes": node_list}))
-    node_list[0] = {"ip": sender_ip, "username": data}
+    node_list[0] = {"ip": sender_ip, "node_id": data}
 
 
 receiver = Receiver(db=db, on_receive=reply)
