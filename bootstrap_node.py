@@ -16,11 +16,12 @@ sender = Sender(db=db)
 
 
 def reply(sender_ip, data):
-    if data['type'] == 'connect':
+    json_data = json.loads(data)
+    if json_data['type'] == 'connect':
         print(f"{sender_ip} connected")
         sender.send(sender_ip, json.dumps({"type": "get_nodes", "nodes": node_list}))
-        node_list[0] = {"ip": sender_ip, "node_id": data['node_id'], "public_key": data['public_key']}
-    elif data['type'] == 'get_nodes':
+        node_list[0] = {"ip": sender_ip, "node_id": json_data['node_id'], "public_key": json_data['public_key']}
+    elif json_data['type'] == 'get_nodes':
         sender.send(sender_ip, json.dumps({"type": "get_nodes", "nodes": node_list}))
 
 
