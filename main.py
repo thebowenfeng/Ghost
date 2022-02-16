@@ -56,8 +56,11 @@ def node_lookup(target_id: str):
 def on_receive(sender_ip, data):
     json_data = json.loads(data)
     if json_data["type"] == "get_nodes":
-        for entry in json_data["nodes"]:
-            kademlia_insert(kademlia_table, node_id, entry)
+        if json_data["nodes"][0] == {}:
+            pass
+        else:
+            for entry in json_data["nodes"]:
+                kademlia_insert(kademlia_table, node_id, entry)
     elif json_data["type"] == "lookup":
         lookup = kademlia_lookup(kademlia_table, node_id, json_data["target_id"])
         if len(lookup) == 0:
@@ -112,6 +115,8 @@ receiver.listen()
 sender = Sender(db=db)
 
 sender.send(BOOTSTRAP_NODE, node_id)
+
+print(f"Node address: {node_id}")
 
 while True:
     recv_id = input("Enter receipient ID: ")
