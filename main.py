@@ -11,11 +11,14 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
+node_list = []
+
 
 def on_receive(sender_ip, data):
     json_data = json.loads(data)
     if json_data["type"] == "get_nodes":
-        print(json_data["nodes"])
+        for node in json_data["nodes"]:
+            node_list.append(node)
 
 
 receiver = Receiver(db=db, on_receive=on_receive)
