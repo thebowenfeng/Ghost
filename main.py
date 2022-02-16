@@ -21,7 +21,7 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 kademlia_table = [[] for i in range(255)]
-BOOTSTRAP_NODE = "34.82.21.166"
+BOOTSTRAP_NODE = "34.145.52.129"
 
 
 def node_lookup(target_id: str):
