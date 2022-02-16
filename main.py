@@ -25,6 +25,14 @@ BOOTSTRAP_NODE = "34.145.52.129"
 
 
 def node_lookup(target_id: str):
+    if kademlia_table == [[] for i in range(255)]:
+        # Cold start scenario
+        sender.send(ip=BOOTSTRAP_NODE, message=json.dumps({"type": "get_nodes"}))
+
+    while kademlia_table == [[] for i in range(255)]:
+        # Wait for nodes to be inserted
+        pass
+    
     lookup = kademlia_lookup(kademlia_table, node_id, target_id)
     if len(lookup) == 0:
         # Case empty row, send lookup req to nodes in closest rows
@@ -62,6 +70,14 @@ def on_receive(sender_ip, data):
             for entry in json_data["nodes"]:
                 kademlia_insert(kademlia_table, node_id, entry)
     elif json_data["type"] == "lookup":
+        if kademlia_table == [[] for i in range(255)]:
+            # Cold start scenario
+            sender.send(ip=BOOTSTRAP_NODE, message=json.dumps({"type": "get_nodes"}))
+
+        while kademlia_table == [[] for i in range(255)]:
+            # Wait for nodes to be inserted
+            pass
+
         lookup = kademlia_lookup(kademlia_table, node_id, json_data["target_id"])
         if len(lookup) == 0:
             # Similar to node lookup, if row is empty, find closest rows and send rows as lookup response
@@ -114,7 +130,7 @@ receiver = Receiver(db=db, on_receive=on_receive)
 receiver.listen()
 sender = Sender(db=db)
 
-sender.send(BOOTSTRAP_NODE, node_id)
+sender.send(BOOTSTRAP_NODE, json.dumps({"type": "connect", "node_id": node_id, "public_key": public_key.exportKey(format='PEM')}))
 
 print(f"Node address: {node_id}")
 
