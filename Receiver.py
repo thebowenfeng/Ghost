@@ -53,8 +53,7 @@ class Receiver:
 
                         free_port(self.inbound_port)
 
-                        callback_thread = Thread(target=self.receive_callback, args=(sender_ip, data))
-                        callback_thread.start()
+                        self.receive_callback(sender_ip, data)
 
     def listen(self):
         unsub = self.db.collection(u'offers').on_snapshot(self.offer_listener)
