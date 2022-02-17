@@ -118,7 +118,7 @@ def on_receive(sender_ip, data):
             for i in range(255):
                 row = kademlia_table[i]
                 for entry in row:
-                    sender.send(ip=entry['ip'], message=data)
+                    sender.send(ip=entry['ip'], message=json.dumps(json_data))
 
 
 if not os.path.isfile("private.pem") or not os.path.isfile("public.pem"):
