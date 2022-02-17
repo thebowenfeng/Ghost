@@ -64,12 +64,14 @@ def node_lookup(target_id: str):
 def on_receive(sender_ip, data):
     json_data = json.loads(data)
     if json_data["type"] == "get_nodes":
+        print(Colors.OKCYAN + "Received get_nodes response" + Colors.ENDC)
         if json_data["nodes"][0] == {}:
             pass
         else:
             for entry in json_data["nodes"]:
                 kademlia_insert(kademlia_table, node_id, entry)
     elif json_data["type"] == "lookup":
+        print(Colors.OKCYAN + "Lookup request received from " + sender_ip + Colors.ENDC)
         if kademlia_table == [[] for i in range(255)]:
             # Cold start scenario
             sender.send(ip=BOOTSTRAP_NODE, message=json.dumps({"type": "get_nodes"}))
@@ -100,8 +102,23 @@ def on_receive(sender_ip, data):
         else:
             sender.send(ip=sender_ip, message=json.dumps({"type": "lookup_result", "nodes": lookup}))
     elif json_data["type"] == "lookup_result":
+        print(Colors.OKCYAN + "Received lookup result from " + sender_ip + Colors.ENDC)
         for node in json_data["nodes"]:
             kademlia_insert(kademlia_table, node_id, node)
+    elif json_data["type"] == "message":
+        try:
+            cipher = PKCS1_OAEP.new(private_key)
+            plaintext = cipher.decrypt(ast.literal_eval(json_data["ciphertext"]))
+            print(f"Received message from {sender_ip}. Data: {plaintext}")
+        except ValueError:
+            print(Colors.OKCYAN + "Received message from " + sender_ip + Colors.ENDC)
+
+        if time.time() < json_data["timeout"]:
+            # Broadcast message to all nodes
+            for i in range(255):
+                row = kademlia_table[i]
+                for entry in row:
+                    sender.send(ip=entry['ip'], message=data)
 
 
 if not os.path.isfile("private.pem") or not os.path.isfile("public.pem"):
@@ -149,4 +166,11 @@ while True:
     if node is False:
         print(Colors.FAIL + "Node lookup timed out!" + Colors.ENDC)
     else:
-        print(node)
+        cipher = PKCS1_OAEP.new(public_key)
+        ciphertext = str(cipher.encrypt(msg.encode('utf-8')))
+
+        # Broadcast message to all nodes
+        for i in range(255):
+            row = kademlia_table[i]
+            for entry in row:
+                sender.send(ip=entry['ip'], message=json.dumps({"type": "message", "ciphertext": ciphertext, "timeout": time.time() + config.MESSAGE_TIMEOUT}))
