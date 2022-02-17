@@ -20,7 +20,7 @@ class Sender:
         self.outbound_port = reserve_port()
 
         if not self.outbound_port:
-            #print(Colors.FAIL + "ERROR: No available ports at the moment" + Colors.ENDC)
+            print(Colors.FAIL + "ERROR: No available ports at the moment" + Colors.ENDC)
             return False
 
         offer = {
@@ -45,10 +45,10 @@ class Sender:
 
         if self.send_offer():
             unsub = self.db.collection(u'offers').document(self.doc_ref[1].id).on_snapshot(self.answer_listener)
-            #print(Colors.OKCYAN + f"LOG: Offer sent to {self.ip}" + Colors.ENDC)
+            print(Colors.OKCYAN + f"LOG: Offer sent to {self.ip}" + Colors.ENDC)
 
             self.answer_flag.wait()
-            #print(Colors.OKCYAN + f"LOG: Answer received from {self.ip}. Attempting communication on remote port {self.remote_port}" + Colors.ENDC)
+            print(Colors.OKCYAN + f"LOG: Answer received from {self.ip}. Attempting communication on remote port {self.remote_port}" + Colors.ENDC)
             unsub.unsubscribe()
             self.answer_flag.clear()
 
@@ -57,6 +57,6 @@ class Sender:
             sock.sendto(self.message.encode(), (self.ip, self.remote_port))
             sock.close()
 
-            #print(Colors.OKCYAN + f"LOG: Sent message to {self.ip}" + Colors.ENDC)
+            print(Colors.OKCYAN + f"LOG: Sent message to {self.ip}" + Colors.ENDC)
 
             free_port(self.outbound_port)
