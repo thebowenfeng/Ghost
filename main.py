@@ -166,7 +166,7 @@ while True:
     if node is False:
         print(Colors.FAIL + "Node lookup timed out!" + Colors.ENDC)
     else:
-        cipher = PKCS1_OAEP.new(public_key)
+        cipher = PKCS1_OAEP.new(RSA.importKey(node['public_key']))
         ciphertext = str(cipher.encrypt(msg.encode('utf-8')))
 
         # Broadcast message to all nodes
