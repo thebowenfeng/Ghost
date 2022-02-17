@@ -1,9 +1,11 @@
 import config
 import random
 import bitarray
+import threading
 
 
 port_reserve_pool = []
+port_pool_lock = threading.Lock()
 
 
 class Colors:
@@ -19,15 +21,23 @@ class Colors:
 
 
 def reserve_port():
+    global port_reserve_pool
+
     while True:
         rand_port = random.randint(config.PORT_START, config.PORT_END)
         if rand_port not in port_reserve_pool:
+            port_pool_lock.acquire()
             port_reserve_pool.append(rand_port)
+            port_pool_lock.release()
             return rand_port
 
 
 def free_port(port: int):
+    global port_reserve_pool
+
+    port_pool_lock.acquire()
     port_reserve_pool.remove(port)
+    port_pool_lock.release()
 
 
 def compare_bits(a: str, b: str):
