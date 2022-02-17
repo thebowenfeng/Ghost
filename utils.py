@@ -24,6 +24,7 @@ def reserve_port():
     global port_reserve_pool
 
     while port_pool_lock.locked():
+        print("asdf")
         pass
 
     while True:
