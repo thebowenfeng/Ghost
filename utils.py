@@ -36,7 +36,8 @@ def free_port(port: int):
     global port_reserve_pool
 
     port_pool_lock.acquire()
-    port_reserve_pool.remove(port)
+    if port in port_reserve_pool:
+        port_reserve_pool.remove(port)
     port_pool_lock.release()
 
 
