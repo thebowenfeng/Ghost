@@ -1,11 +1,10 @@
 import config
 import random
 import bitarray
-import threading
+from main import port_pool_lock
 
 
 port_reserve_pool = []
-port_pool_lock = threading.Lock()
 
 
 class Colors:

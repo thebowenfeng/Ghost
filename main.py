@@ -9,6 +9,7 @@ from Crypto import Random
 import ast
 from hashlib import sha256
 import time
+import threading
 
 import config
 from Sender import Sender
@@ -22,6 +23,9 @@ db = firestore.client()
 
 kademlia_table = [[] for i in range(255)]
 BOOTSTRAP_NODE = "34.145.52.129"
+
+port_pool_lock = threading.Lock()
+node_list_lock = threading.Lock()
 
 
 def node_lookup(target_id: str):
