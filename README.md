@@ -27,3 +27,7 @@ Within `config.py`, several settings could be manually adjusted. These include:
 - `PORT_START` and `PORT_END`. This is a numerical range denoting the available/free ports on your network. 
 - `LOOKUP_TIMEOUT`. This represents the maximum number of seconds your node will continue to search for another node in the network until it cease the search.
 - `MESSAGE_TIMEOUT`. This represents the number of seconds until messages will cease to be transmitted further within the network.
+
+### Technical overview
+
+Peer to peer communication is made possible using UDP hole punching. The network communication functionalities are adapted from [here](https://github.com/thebowenfeng/Python-P2P-Chat)
